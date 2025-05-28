@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useStore } from '@/lib/store';
+import { useTimeStore } from '@/lib/timeStore';
+import { useIntradayData } from '@/services/5min_data/5min_data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartTypeSelector } from '@/components/ChartTypeSelector';
 import { StockSelector } from '@/components/StockSelector';
@@ -15,40 +16,42 @@ interface PriceData {
   time: string;
 }
 
+const SYMBOLS = ['AAPL', 'GOOG', 'MSFT', 'AMZN', 'TSLA'];
+
 export function StockChart() {
-  const { stocks } = useStore();
+  const { currentTime } = useTimeStore();
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
   const [priceHistory, setPriceHistory] = useState<PriceData[]>([]);
   const [chartType, setChartType] = useState<ChartType>('line');
   const [showPercentages, setShowPercentages] = useState(true);
 
+  const data = useIntradayData(SYMBOLS);
+
   useEffect(() => {
-    if (stocks.length > 0 && selectedStocks.length === 0) {
-      setSelectedStocks([stocks[0].symbol]);
+    if (selectedStocks.length === 0 && SYMBOLS.length > 0) {
+      setSelectedStocks([SYMBOLS[0]]);
     }
-  }, [stocks]);
+  }, []);
 
   useEffect(() => {
-    // Only update if we have selected stocks
-    if (selectedStocks.length === 0) return;
+    if (selectedStocks.length === 0 || data.length === 0) return;
 
-    const selectedStockData = stocks.filter((s) =>
-      selectedStocks.includes(s.symbol)
-    );
+    const relevantData = data.filter((d) => selectedStocks.includes(d.sym_root));
+
+    const latestPoint: PriceData = {
+      time: currentTime.toLocaleTimeString(),
+    };
+
+    selectedStocks.forEach((symbol) => {
+      const last = [...relevantData].reverse().find((d) => d.sym_root === symbol);
+      if (last) latestPoint[symbol] = last.CLOSE;
+    });
 
     setPriceHistory((prev) => {
-      const newPoint: PriceData = {
-        time: new Date().toLocaleTimeString(),
-      };
-
-      selectedStockData.forEach((stock) => {
-        newPoint[stock.symbol] = stock.price;
-      });
-
-      const updatedHistory = [...prev, newPoint].slice(-20);
-      return updatedHistory;
+      const updated = [...prev, latestPoint].slice(-50);
+      return updated;
     });
-  }, [stocks, selectedStocks]);
+  }, [data, selectedStocks, currentTime]);
 
   return (
     <Card>
@@ -59,7 +62,7 @@ export function StockChart() {
         </div>
         <div className="flex justify-between flex-wrap items-center gap-4">
           <StockSelector
-            stocks={stocks}
+            stocks={SYMBOLS.map((symbol) => ({ symbol, name: symbol, price: 0, previousPrice: 0, percentageChange: 0, volume: 0 }))}
             selectedStocks={selectedStocks}
             onSelect={setSelectedStocks}
           />

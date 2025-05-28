@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
-import { generateMockPriceUpdate } from '@/lib/mockData';
+import { useTimeStore } from '@/lib/timeStore';
+import { useIntradayData } from '@/services/5min_data/5min_data' ;
 import {
   Table,
   TableBody,
@@ -13,17 +14,54 @@ import {
 } from '@/components/ui/table';
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
+const SYMBOLS = ['AAPL', 'GOOG', 'MSFT', 'AMZN', 'TSLA'];
+
 export default function MarketOverview() {
   const { stocks, updateStocks } = useStore();
-
+  const { currentTime } = useTimeStore();
+  const previousRef = useRef<Map<string, number>>(new Map());
+  const data = useIntradayData(SYMBOLS);
+  
   useEffect(() => {
-    const interval = setInterval(() => {
-      const updatedStocks = stocks.map(generateMockPriceUpdate);
-      updateStocks(updatedStocks);
-    }, 5000);
+    const loadPrices = async () => {
 
-    return () => clearInterval(interval);
-  }, [stocks, updateStocks]);
+      interface PriceRow {
+        sym_root: string;
+        CLOSE: number;
+        VOLUME: number;
+      }
+
+      interface UpdatedStock {
+        symbol: string;
+        name: string;
+        price: number;
+        previousPrice: number;
+        percentageChange: number;
+        volume: number;
+      }
+
+      const updatedStocks: UpdatedStock[] = (data as PriceRow[]).map((row: PriceRow): UpdatedStock => {
+        const previousPrice: number = previousRef.current.get(row.sym_root) ?? row.CLOSE;
+        const percentageChange: number = ((row.CLOSE - previousPrice) / previousPrice) * 100;
+
+        // Update the reference for the next frame
+        previousRef.current.set(row.sym_root, row.CLOSE);
+
+        return {
+          symbol: row.sym_root,
+          name: row.sym_root, // You could map this to company names if needed
+          price: row.CLOSE,
+          previousPrice,
+          percentageChange,
+          volume: row.VOLUME,
+        };
+      });
+
+      updateStocks(updatedStocks);
+    };
+
+    loadPrices();
+  }, [currentTime]);
 
   return (
     <div className="rounded-lg border bg-card">

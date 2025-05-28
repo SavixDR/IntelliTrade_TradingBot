@@ -3,6 +3,7 @@ import MarketOverview from '@/components/MarketOverview';
 import TradingDashboard from '@/components/TradingDashboard';
 import { StockChart } from '@/components/StockChart';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
+import { SimulatedClockControls } from '@/components/SimulatedClockController';
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
               <TradingDashboard />
             </Suspense>
           </div>
+          <SimulatedClockControls/>
         </div>
       </div>
     </main>

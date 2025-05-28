@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from 'next-themes';
 import { Providers } from './providers';
+import { SimulatedClock } from '@/components/SimulatedClock';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <SimulatedClock/>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

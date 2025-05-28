@@ -108,7 +108,7 @@ export function ChartContent({
         <YAxis
           stroke="hsl(var(--muted-foreground))"
           opacity={0.5}
-          domain={showPercentages ? [80, 120] : ['auto', 'auto']}
+          domain={showPercentages ? [99, 101] : ['auto', 'auto']}
           tick={{ fontSize: 12 }}
           width={45}
           tickFormatter={(value) => (showPercentages ? `${value}%` : value)}
