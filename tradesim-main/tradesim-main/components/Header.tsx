@@ -20,7 +20,7 @@ export function Header() {
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
-          TradeSim
+          Intellitrade
         </Link>
         <div className="flex items-center space-x-4">
           {user ? (

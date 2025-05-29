@@ -5,8 +5,8 @@ import { useTimeStore } from '@/lib/timeStore';
 export interface FiveMinData {
   sym_root: string;
   time_bucket: string;
-  CLOSE: number;
-  VOLUME: number;
+  close: number;
+  volume: number;
 }
 
 export function useIntradayData(symbols: string[]) {
@@ -25,9 +25,9 @@ export function useIntradayData(symbols: string[]) {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('5min_data')
-        .select('sym_root, time_bucket, CLOSE, VOLUME')
+        .select('sym_root, time_bucket, close, volume')
         .in('sym_root', symbols)
-        .eq('DATE', currentDate);
+        .eq('date', currentDate);
 
       if (error) {
         console.error('Supabase fetch error:', error.message);
@@ -63,5 +63,26 @@ export function useIntradayData(symbols: string[]) {
     setData(latestPerSymbol);
   }, [currentTime, symbols]);
 
-  return data;
+  const getOpenPrice = (symbol: string): number | null => {
+    const rows = cacheRef.current[currentDate] || [];
+    const openRow = rows.find((r) =>
+      r.sym_root === symbol &&
+      new Date(r.time_bucket).getUTCHours() === 9 && // 9:30 ET = 14:30 UTC
+      new Date(r.time_bucket).getUTCMinutes() === 30
+    );
+    return openRow?.close ?? null;
+  };
+
+  const getClosePrice = (symbol: string): number | null => {
+    const rows = cacheRef.current[currentDate] || [];
+    const closeRow = rows.find(
+      (r) =>
+        r.sym_root === symbol &&
+        new Date(r.time_bucket).getUTCHours() === 15 &&
+        new Date(r.time_bucket).getUTCMinutes() === 55
+    );
+    return closeRow?.close ?? null;
+  };
+
+  return {data, getOpenPrice, getClosePrice};
 }

@@ -84,3 +84,9 @@ export type PredictionResult = {
 	reference_date: string;
 	daily_raw_data_list: any[];
 } | null;
+
+export type CapitalSnapshot = {
+  date: string;
+  capital: number;
+};
+

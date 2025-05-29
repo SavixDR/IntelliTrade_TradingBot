@@ -14,21 +14,44 @@ import {
 } from '@/components/ui/table';
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
-const SYMBOLS = ['AAPL', 'GOOG', 'MSFT', 'AMZN', 'TSLA'];
+const SYMBOLS = [
+	"AAPL",
+	"ABBV",
+	"ADBE",
+	"AMZN",
+	"BA",
+	"BABA",
+	"CRM",
+	"CSCO",
+	"DIS",
+	"GOOG",
+	"KO",
+	"MA",
+	"MSFT",
+	"NFLX",
+	"NVDA",
+	"SHOP",
+	"TSLA",
+	"TWLO",
+	"V",
+	"VOO",
+	"VTI",
+];
 
 export default function MarketOverview() {
   const { stocks, updateStocks } = useStore();
   const { currentTime } = useTimeStore();
   const previousRef = useRef<Map<string, number>>(new Map());
-  const data = useIntradayData(SYMBOLS);
+  const response = useIntradayData(SYMBOLS);
+  const data = response.data || [];
   
   useEffect(() => {
     const loadPrices = async () => {
 
       interface PriceRow {
         sym_root: string;
-        CLOSE: number;
-        VOLUME: number;
+        close: number;
+        volume: number;
       }
 
       interface UpdatedStock {
@@ -41,19 +64,19 @@ export default function MarketOverview() {
       }
 
       const updatedStocks: UpdatedStock[] = (data as PriceRow[]).map((row: PriceRow): UpdatedStock => {
-        const previousPrice: number = previousRef.current.get(row.sym_root) ?? row.CLOSE;
-        const percentageChange: number = ((row.CLOSE - previousPrice) / previousPrice) * 100;
+        const previousPrice: number = previousRef.current.get(row.sym_root) ?? row.close;
+        const percentageChange: number = ((row.close - previousPrice) / previousPrice) * 100;
 
         // Update the reference for the next frame
-        previousRef.current.set(row.sym_root, row.CLOSE);
+        previousRef.current.set(row.sym_root, row.close);
 
         return {
           symbol: row.sym_root,
           name: row.sym_root, // You could map this to company names if needed
-          price: row.CLOSE,
+          price: row.close,
           previousPrice,
           percentageChange,
-          volume: row.VOLUME,
+          volume: row.volume,
         };
       });
 

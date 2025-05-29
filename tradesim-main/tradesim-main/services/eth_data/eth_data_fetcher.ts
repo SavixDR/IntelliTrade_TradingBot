@@ -10,7 +10,7 @@ export async function fetchEthDataByDate(date: string, symbols: string[]): Promi
   for (const symbol of symbols) {
     const { data, error } = await supabase.rpc('get_eth_history', {
       symbol,
-      reference_date: '2020-01-09',
+      reference_date: date,
     });
 
     if (error) {

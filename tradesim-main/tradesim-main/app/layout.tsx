@@ -7,10 +7,11 @@ import { ThemeProvider } from 'next-themes';
 import { Providers } from './providers';
 import { SimulatedClock } from '@/components/SimulatedClock';
 
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TradeSim - Real-Time Trading Simulator',
+  title: 'Intellitrade - Real-Time Trading Simulator',
   description:
     'Experience real-time trading with our advanced trading simulator',
 };
