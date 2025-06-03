@@ -17,7 +17,7 @@ export function Header() {
   };
 
   return (
-    <header className="border-b">
+    <header className="relative top-0 left-0 w-full z-50 bg-background">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
           Intellitrade

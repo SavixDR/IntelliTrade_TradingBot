@@ -4,8 +4,14 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTimeStore } from "@/lib/timeStore";
 import { Label } from "@/components/ui/label";
-import { AutoTraderWrapper } from '@/components/useAutoTradeWrapper';
-
+import { AutoTraderWrapper } from "@/components/useAutoTradeWrapper";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "./ui/card";
 
 type Prediction = {
 	buy: number;
@@ -55,9 +61,9 @@ const PredictionPane: React.FC = () => {
 	>({});
 	const { currentTime, autoMode, setAutoMode } = useTimeStore();
 	const [lastFetchedDate, setLastFetchedDate] = useState<string | null>(null);
-  const [apiResponse, setApiResponse] = useState<ApiResponse>({});
+	const [apiResponse, setApiResponse] = useState<ApiResponse>({});
 
-  // Fetch predictions from the API 
+	// Fetch predictions from the API
 	const fetchPrediction = async () => {
 		setLoading(true);
 		try {
@@ -84,10 +90,7 @@ const PredictionPane: React.FC = () => {
 					};
 				}
 			}
-      setApiResponse(data);
-setPredictionMap(formatted);
-
-
+			setApiResponse(data);
 			setPredictionMap(formatted);
 		} catch (error) {
 			console.error("Error fetching prediction:", error);
@@ -103,10 +106,6 @@ setPredictionMap(formatted);
 
 		const isMarketOpenTime = currentHour >= 9 && currentMinute >= 30;
 
-    console.log("Current Time:", currentTime);
-    console.log("Is Market Open Time:", isMarketOpenTime);
-    console.log("starts getting predictions");
-
 		if (isMarketOpenTime && lastFetchedDate !== today) {
 			fetchPrediction();
 			setLastFetchedDate(today);
@@ -115,81 +114,101 @@ setPredictionMap(formatted);
 	}, [currentTime]);
 
 	return (
-		<aside className="fixed top-[64px] left-0 bottom-0 w-[240px] bg-background text-foreground pt-6 px-4 shadow-md z-40 overflow-y-auto border-r border-border">
-			<h3 className="text-base font-semibold mb-6 text-center">
-				Our predictions:
-			</h3>
+		<Card className="h-full max-h-[calc(75vh-75px)] flex flex-col">
+			<CardHeader>
+				<CardTitle>Predictions</CardTitle>
+				<CardDescription>
+					Our AI predicts the best stocks to buy, hold, or sell today.
+				</CardDescription>
+			</CardHeader>
 
-			{Object.entries(predictionMap)
-				.sort(([, a], [, b]) => b.buy - a.buy) // Sort by highest buy
-				.map(([symbol, { buy, neutral, sell }]) => (
-					<div
-						key={symbol}
-						className="mb-8 w-full flex flex-col items-center"
-					>
-						<div className="font-medium mb-2 text-center">{symbol}</div>
-
-						<div className="w-full max-w-[160px] h-4 rounded overflow-hidden bg-muted flex">
-							<div
-								className="bg-green-500"
-								style={{ width: `${buy * 100}%` }}
-								title={`Buy: ${(buy * 100).toFixed(1)}%`}
+			{/* Scrollable Content */}
+			<CardContent className="flex-1 overflow-auto px-4 pb-4">
+				<div className="mb-6">
+					<div className="flex items-center justify-between">
+						<Label htmlFor="auto-mode">Auto Mode:</Label>
+						<label className="relative inline-flex items-center cursor-pointer">
+							<input
+								type="checkbox"
+								id="auto-mode"
+								className="sr-only peer"
+								checked={autoMode}
+								onChange={() => setAutoMode && setAutoMode(!autoMode)}
 							/>
 							<div
-								className="bg-yellow-400"
-								style={{ width: `${neutral * 100}%` }}
-								title={`Neutral: ${(neutral * 100).toFixed(1)}%`}
+								className={`w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full ${
+									autoMode
+										? `peer-hover:bg-green-400 peer`
+										: `peer-hover:bg-gray-600 peer`
+								} dark:bg-gray-700 peer-checked:bg-green-500`}
 							/>
-							<div
-								className="bg-red-500"
-								style={{ width: `${sell * 100}%` }}
-								title={`Sell: ${(sell * 100).toFixed(1)}%`}
-							/>
-						</div>
-
-						<div className="flex justify-between gap-3 mt-2 text-xs font-medium w-full max-w-[160px]">
-							<span className="text-green-500">Buy</span>
-							<span className="text-yellow-400">Neutral</span>
-							<span className="text-red-500">Sell</span>
-						</div>
+						</label>
 					</div>
-				))}
-
-			<div className="text-center mt-4">
-				<Button
-					onClick={fetchPrediction}
-					disabled={loading}
-				>
-					{loading ? "Fetching..." : "Refresh Predictions"}
-				</Button>
-			</div>
-			<div className="border-t pt-4">
-				<div className="flex items-center justify-between">
-					<Label htmlFor="auto-mode">Auto Mode:</Label>
-					<label className="relative inline-flex items-center cursor-pointer">
-						<input
-							type="checkbox"
-							id="auto-mode"
-							className="sr-only peer"
-							checked={autoMode}
-							onChange={() => setAutoMode && setAutoMode(!autoMode)}
-						/>
-						<div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:bg-green-500" />
-					</label>
+					{autoMode && (
+						<p className="text-sm mt-2 text-muted-foreground">
+							When Auto Mode is enabled, our <strong>IntelliTrade Bot</strong>{" "}
+							will execute trades automatically based on predictions. Check your
+							dashboard for results.
+						</p>
+					)}
 				</div>
-				{autoMode && (
-					<p className="text-sm mt-2 text-muted-foreground">
-						When Auto Mode is enabled, our <strong>IntelliTrade Bot</strong>{" "}
-						will execute trades automatically based on predictions. Check your
-						dashboard for results.
-					</p>
-				)}
-			</div>
-      {Object.keys(apiResponse).length > 0 && (
-  <AutoTraderWrapper predictions={apiResponse} />
-)}
 
-		</aside>
+				<div className="space-y-6 overflow-y-auto">
+					{Object.entries(predictionMap)
+						.sort(([, a], [, b]) => b.buy - a.buy)
+						.map(([symbol, { buy, neutral, sell }]) => (
+							<div className="flex flex-row items-center" key={symbol}>
+								<div
+									key={symbol}
+									className="w-full flex flex-col items-center"
+								>
+									<div className="font-medium mb-2 text-center">{symbol}</div>
+	
+									<div className="w-full max-w-[160px] h-4 rounded overflow-hidden bg-muted flex">
+										<div
+											className="bg-green-500"
+											style={{ width: `${buy * 100}%` }}
+											title={`Buy: ${(buy * 100).toFixed(1)}%`}
+										/>
+										<div
+											className="bg-yellow-400"
+											style={{ width: `${neutral * 100}%` }}
+											title={`Neutral: ${(neutral * 100).toFixed(1)}%`}
+										/>
+										<div
+											className="bg-red-500"
+											style={{ width: `${sell * 100}%` }}
+											title={`Sell: ${(sell * 100).toFixed(1)}%`}
+										/>
+									</div>
+	
+									<div className="flex justify-between gap-3 mt-2 text-xs font-medium w-full max-w-[160px]">
+										<span className="text-green-500">Buy</span>
+										<span className="text-yellow-400">Neutral</span>
+										<span className="text-red-500">Sell</span>
+									</div>
+								</div>
+								<div className="flex">
+										Buy : {buy ? buy.toFixed(2) : 100}%
+									</div>
+							</div>
+						))}
+				</div>
+
+				<div className="text-center mt-4">
+					<Button
+						onClick={fetchPrediction}
+						disabled={loading}
+					>
+						{loading ? "Fetching..." : "Refresh Predictions"}
+					</Button>
+				</div>
+
+				{Object.keys(apiResponse).length > 0 && autoMode && (
+					<AutoTraderWrapper predictions={apiResponse} />
+				)}
+			</CardContent>
+		</Card>
 	);
 };
 

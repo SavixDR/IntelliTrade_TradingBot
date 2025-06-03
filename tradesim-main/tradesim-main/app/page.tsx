@@ -1,7 +1,8 @@
-'use client'
+// app/page.tsx or app/page.jsx
+"use client";
 
+import { Suspense } from "react";
 import PredictionPane from "@/components/PredictionPane";
-import { Suspense, use } from "react";
 import MarketOverview from "@/components/MarketOverview";
 import TradingDashboard from "@/components/TradingDashboard";
 import { StockChart } from "@/components/StockChart";
@@ -13,34 +14,37 @@ import CapitalChart from "@/components/CapitalChart";
 export default function Home() {
 	return (
 		<main className="min-h-screen bg-background">
-      <MarketDataBridge/>
-			<PredictionPane/>
-			<div className="ml-[240px] flex-1 overflow-x-hidden">
-				<ConnectionStatus />
-				<div className="container mx-auto px-4 py-8">
-					<h1 className="text-4xl font-bold mb-8">Intellitrade Trading Platform</h1>
-					<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-						<div className="lg:col-span-8">
-							<Suspense fallback={<div>Loading market data...</div>}>
-								<MarketOverview />
-							</Suspense>
-							<div className="mt-8">
-								<Suspense fallback={<div>Loading chart...</div>}>
-									<StockChart />
-								</Suspense>
-							</div>
-						</div>
-						<div className="lg:col-span-4 space-y-4">
-							<Suspense fallback={<div>Loading trading dashboard...</div>}>
-								<TradingDashboard />
-							</Suspense>
-						</div>
-						<div className="lg:col-span-12 mt-8">
-						  <SimulatedClockControls />
-              <CapitalChart />
-						</div>
-					</div>
+			<MarketDataBridge />
+
+			<div className="grid grid-cols-12 gap-4 px-4 py-6">
+				{/* Prediction Pane (Left sidebar) */}
+				<div className="col-span-2">
+					<PredictionPane />
 				</div>
+
+				{/* Market Overview & Chart */}
+				<div className="col-span-6 flex flex-col gap-4">
+					<Suspense fallback={<div>Loading Market Overview...</div>}>
+						<MarketOverview />
+					</Suspense>
+					<Suspense fallback={<div>Loading Chart...</div>}>
+						<StockChart />
+					</Suspense>
+				</div>
+
+				{/* Trading Dashboard & Portfolio */}
+				<div className="col-span-3 flex flex-col gap-4">
+					<Suspense fallback={<div>Loading Trading Dashboard...</div>}>
+						<TradingDashboard />
+					</Suspense>
+				</div>
+			</div>
+
+			{/* Footer: Clock + Capital */}
+			<div className="px-4">
+				<ConnectionStatus />
+				<SimulatedClockControls />
+				<CapitalChart />
 			</div>
 		</main>
 	);

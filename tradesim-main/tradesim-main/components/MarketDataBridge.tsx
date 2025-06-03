@@ -42,7 +42,6 @@ export function MarketDataBridge() {
 			volume: row.volume,
 		}));
 
-        console.log("MarketDataBridge - formatted data:", formatted);
         if (formatted.length === 0) {   
             console.warn("MarketDataBridge - No data available to update stocks.");
             return;
