@@ -15,9 +15,10 @@ type ApiResponse = Record<string, SinglePrediction>;
 
 interface Props {
   predictions: ApiResponse;
+  predictionReady?: boolean; // Optional, if you want to pass a specific date
 }
 
-export function AutoTraderWrapper({ predictions }: Props) {
-  useAutoTrader(predictions);
+export function AutoTraderWrapper({ predictions,predictionReady }: Props) {
+  useAutoTrader(predictions,predictionReady);
   return null; // No UI
 }

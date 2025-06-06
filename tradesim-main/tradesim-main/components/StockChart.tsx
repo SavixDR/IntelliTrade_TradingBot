@@ -64,7 +64,8 @@ export function StockChart() {
 		);
 
 		const latestPoint: PriceData = {
-			time: currentTime.toLocaleTimeString(),
+			// Use the current time in ISO Format, remove the date part
+			time: currentTime.toISOString().substring(11, 16),
 		};
 
 		selectedStocks.forEach((symbol) => {

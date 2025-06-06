@@ -119,8 +119,8 @@ export function ChartContent({
             borderColor: 'hsl(var(--border))',
           }}
           labelStyle={{ color: 'hsl(var(--foreground))' }}
-          formatter={(value: number) => [
-            showPercentages ? `${value.toFixed(2)}%` : value.toFixed(2),
+          formatter={(value: number,name:string) => [
+            showPercentages ? `${value.toFixed(2)}%` : value.toFixed(2),name
           ]}
         />
         {dataKeys.map((dataKey, index) => renderChart(dataKey, index))}

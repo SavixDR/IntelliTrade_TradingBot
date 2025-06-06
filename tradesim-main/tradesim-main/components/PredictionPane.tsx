@@ -62,6 +62,7 @@ const PredictionPane: React.FC = () => {
 	const { currentTime, autoMode, setAutoMode } = useTimeStore();
 	const [lastFetchedDate, setLastFetchedDate] = useState<string | null>(null);
 	const [apiResponse, setApiResponse] = useState<ApiResponse>({});
+	const [predictionsReady, setPredictionsReady] = useState(false);
 
 	// Fetch predictions from the API
 	const fetchPrediction = async () => {
@@ -91,6 +92,7 @@ const PredictionPane: React.FC = () => {
 				}
 			}
 			setApiResponse(data);
+			setPredictionsReady(true);
 			setPredictionMap(formatted);
 		} catch (error) {
 			console.error("Error fetching prediction:", error);
@@ -110,6 +112,12 @@ const PredictionPane: React.FC = () => {
 			fetchPrediction();
 			setLastFetchedDate(today);
 		}
+		
+		const isNewDay = (currentHour >= 16 && currentMinute >= 30) ;
+		if (isNewDay && predictionsReady) {
+			setPredictionsReady(false);
+		}
+		
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentTime]);
 
@@ -205,7 +213,7 @@ const PredictionPane: React.FC = () => {
 				</div>
 
 				{Object.keys(apiResponse).length > 0 && autoMode && (
-					<AutoTraderWrapper predictions={apiResponse} />
+					<AutoTraderWrapper predictions={apiResponse} predictionReady={predictionsReady} />
 				)}
 			</CardContent>
 		</Card>

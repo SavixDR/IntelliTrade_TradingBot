@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Stock, User, Trade } from './types';
-import { initialStocks } from './mockData';
 
 interface StoreState {
   stocks: Stock[];

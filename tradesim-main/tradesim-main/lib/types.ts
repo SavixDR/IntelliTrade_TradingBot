@@ -90,3 +90,5 @@ export type CapitalSnapshot = {
   capital: number;
 };
 
+
+

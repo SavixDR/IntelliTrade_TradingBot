@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 interface StockSelectorProps {
   stocks: Stock[];

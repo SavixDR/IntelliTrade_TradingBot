@@ -32,7 +32,10 @@ const SYMBOLS = [
 	"VTI",
 ];
 
-export function useAutoTrader(predictions: Record<string, any>) {
+export function useAutoTrader(
+	predictions: Record<string, any>,
+	predictionReady: boolean | undefined
+) {
 	const { user, setUser, addTrade, updateBalance, updateCapitalHistory } =
 		useStore();
 	const { currentTime, autoMode } = useTimeStore();
@@ -43,8 +46,11 @@ export function useAutoTrader(predictions: Record<string, any>) {
 	const tradedTodayRef = useRef<Set<string>>(new Set());
 	const lastTradeDateRef = useRef<string | null>(null);
 
+	console.log("AutoTrader initialized with predictions:", predictionReady);
+
 	useEffect(() => {
-		if (!autoMode || !user) return;
+		if (!autoMode || !user || (predictionReady ? !predictionReady : true))
+			return;
 
 		const today = currentTime.toISOString().slice(0, 10);
 
@@ -61,7 +67,7 @@ export function useAutoTrader(predictions: Record<string, any>) {
 		const currentHour = currentTime.getUTCHours();
 		const currentMinute = currentTime.getUTCMinutes();
 		const isMarketOpenTime =
-			currentHour >= 9 &&  currentMinute >= 30 && currentMinute <= 45;
+			currentHour >= 9 && currentMinute >= 30 && currentMinute <= 45;
 
 		if (!isMarketOpenTime) return;
 

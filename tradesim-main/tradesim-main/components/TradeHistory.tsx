@@ -38,7 +38,7 @@ export function TradeHistory() {
                   ${(trade.quantity * trade.price).toFixed(2)}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {trade.timestamp.toLocaleString()}
+                  {new Date(trade.timestamp).toUTCString()}
                 </p>
               </div>
             </div>
