@@ -16,6 +16,7 @@ import { Portfolio } from "@/components/Portfolio";
 import { TradeHistory } from "@/components/TradeHistory";
 import { createClient } from "@/utils/supbase/client";
 import { useTimeStore } from "@/lib/timeStore";
+import { toast } from "@/hooks/use-toast";
 
 export default function TradingDashboard() {
 	const {
@@ -35,7 +36,7 @@ export default function TradingDashboard() {
 		setTradeType(type);
 	};
 
-	const onConfirmTrade = (trade: {
+	const onConfirmTrade = async (trade: {
 		symbol: string;
 		quantity: number;
 		price: number;
@@ -93,15 +94,32 @@ export default function TradingDashboard() {
 
 		// 4. Optionally insert into Supabase
 		const supabase = createClient();
-		supabase.from("trades").insert({
-			user_id: user.id,
-			symbol: trade.symbol,
-			type: trade.type,
-			quantity: trade.quantity,
-			price: trade.price,
-			timestamp: currentTime.toISOString().slice(0, 19).replace("T", " "),
+		const { error, data } = await supabase.from("trades").insert([
+			{
+				id: user.id,
+				symbol: trade.symbol,
+				type: trade.type,
+				quantity: trade.quantity,
+				price: trade.price,
+				timestamp: currentTime.toISOString().slice(0, 19).replace("T", " "),
+			},
+		]);
+
+		if (error) {
+			console.error("Error inserting trade into Supabase:", error);
+		} else {
+			console.log("Trade inserted into Supabase:", data);
+		}
+
+		console.log("Trade inserted into Supabase:", data, error);
+		// 5. Show success toast
+		toast({
+			title: "Trade Executed",
+			description: `Successfully ${trade.type === "buy" ? "bought" : "sold"} ${
+				trade.quantity
+			} shares of ${trade.symbol} at $${trade.price.toFixed(2)}`,
 		});
-    
+
 		// Close modal
 		setSelectedStock(null);
 	};

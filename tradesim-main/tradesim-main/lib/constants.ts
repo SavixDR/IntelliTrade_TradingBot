@@ -1,0 +1,25 @@
+// Symbols used for the stock market simulation
+export const GLOBAL_SYMBOLS = [
+    "AAPL",
+    "ABBV",
+    "ADBE",
+    "AMZN",
+    "BA",
+    "BABA",
+    "CRM",
+    "CSCO",
+    "DIS",
+    "GOOG",
+    "KO",
+    "MA",
+    "MSFT",
+    "NFLX",
+    "NVDA",
+    "SHOP",
+    "TSLA",
+    "TWLO",
+    "V",
+    "VOO",
+    "VTI",
+];
+

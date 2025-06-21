@@ -12,6 +12,8 @@ import {
 export function TradeHistory() {
   const { trades } = useStore();
 
+   const sortedTrades = [...trades].reverse();
+
   return (
     <Card>
       <CardHeader>
@@ -19,8 +21,8 @@ export function TradeHistory() {
         <CardDescription>Your recent trading activity</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {trades.map((trade, index) => (
+        <div className="space-y-4 max-h-[400px] overflow-y-scroll">
+          {sortedTrades.map((trade, index) => (
             <div
               key={index}
               className="flex items-center justify-between p-4 border rounded-lg"

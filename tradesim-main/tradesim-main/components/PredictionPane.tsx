@@ -12,6 +12,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "./ui/card";
+import { GLOBAL_SYMBOLS } from "@/lib/constants";
 
 type Prediction = {
 	buy: number;
@@ -30,29 +31,7 @@ type ApiResponse = {
 	};
 };
 
-const SYMBOLS = [
-	"AAPL",
-	"ABBV",
-	"ADBE",
-	"AMZN",
-	"BA",
-	"BABA",
-	"CRM",
-	"CSCO",
-	"DIS",
-	"GOOG",
-	"KO",
-	"MA",
-	"MSFT",
-	"NFLX",
-	"NVDA",
-	"SHOP",
-	"TSLA",
-	"TWLO",
-	"V",
-	"VOO",
-	"VTI",
-];
+const SYMBOLS = GLOBAL_SYMBOLS;
 
 const PredictionPane: React.FC = () => {
 	const [loading, setLoading] = useState(false);

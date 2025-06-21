@@ -8,6 +8,7 @@ import { ChartTypeSelector } from "@/components/ChartTypeSelector";
 import { StockSelector } from "@/components/StockSelector";
 import { ChartContent } from "@/components/ChartContent";
 import { Switch } from "@/components/ui/switch";
+import { GLOBAL_SYMBOLS } from "@/lib/constants";
 
 type ChartType = "line" | "area" | "bar";
 
@@ -16,29 +17,7 @@ interface PriceData {
 	time: string;
 }
 
-const SYMBOLS = [
-	"AAPL",
-	"ABBV",
-	"ADBE",
-	"AMZN",
-	"BA",
-	"BABA",
-	"CRM",
-	"CSCO",
-	"DIS",
-	"GOOG",
-	"KO",
-	"MA",
-	"MSFT",
-	"NFLX",
-	"NVDA",
-	"SHOP",
-	"TSLA",
-	"TWLO",
-	"V",
-	"VOO",
-	"VTI",
-];
+const SYMBOLS = GLOBAL_SYMBOLS;
 
 export function StockChart() {
 	const { currentTime } = useTimeStore();

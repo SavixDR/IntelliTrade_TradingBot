@@ -7,30 +7,9 @@ import { createClient } from "@/utils/supbase/client";
 import { Trade } from "@/lib/types";
 import { useIntradayData } from "@/services/5min_data/5min_data";
 import { useToast } from "@/components/ui/use-toast";
+import { GLOBAL_SYMBOLS } from "./constants";
 
-const SYMBOLS = [
-	"AAPL",
-	"ABBV",
-	"ADBE",
-	"AMZN",
-	"BA",
-	"BABA",
-	"CRM",
-	"CSCO",
-	"DIS",
-	"GOOG",
-	"KO",
-	"MA",
-	"MSFT",
-	"NFLX",
-	"NVDA",
-	"SHOP",
-	"TSLA",
-	"TWLO",
-	"V",
-	"VOO",
-	"VTI",
-];
+const SYMBOLS = GLOBAL_SYMBOLS;
 
 export function useAutoTrader(
 	predictions: Record<string, any>,
@@ -114,7 +93,7 @@ export function useAutoTrader(
 					try {
 						const supabase = createClient();
 						await supabase.from("trades").insert({
-							user_id: user.id,
+							id: user.id,
 							symbol,
 							type: "buy",
 							quantity,
@@ -197,7 +176,7 @@ export function useAutoTrader(
 			try {
 				const supabase = createClient();
 				await supabase.from("trades").insert({
-					user_id: user.id,
+					id: user.id,
 					symbol,
 					type: "sell",
 					quantity,

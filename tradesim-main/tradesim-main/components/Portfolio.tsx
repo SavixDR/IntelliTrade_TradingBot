@@ -38,7 +38,7 @@ export function Portfolio() {
         <CardDescription>Current positions and performance</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[400px] overflow-y-scroll">
           {Object.entries(user.portfolio).map(([symbol, position]) => (
             <div
               key={symbol}

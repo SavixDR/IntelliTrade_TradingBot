@@ -2,42 +2,19 @@ import { useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { useIntradayData } from "@/services/5min_data/5min_data"; // assuming this is where it lives
 import { useTimeStore } from "@/lib/timeStore";
+import { GLOBAL_SYMBOLS } from "@/lib/constants";
 
-const SYMBOLS = [
-	"AAPL",
-	"ABBV",
-	"ADBE",
-	"AMZN",
-	"BA",
-	"BABA",
-	"CRM",
-	"CSCO",
-	"DIS",
-	"GOOG",
-	"KO",
-	"MA",
-	"MSFT",
-	"NFLX",
-	"NVDA",
-	"SHOP",
-	"TSLA",
-	"TWLO",
-	"V",
-	"VOO",
-	"VTI",
-];
+const SYMBOLS = GLOBAL_SYMBOLS;
 
 export function MarketDataBridge() {
 	const { updateStocks } = useStore();
-		const { currentTime } = useTimeStore();
-		const previousRef = useRef<Map<string, number>>(new Map());
-		const response = useIntradayData(SYMBOLS);
-		const data = response.data || [];
-	  const getOpenPrice = response.getOpenPrice;
-		const openPriceRef = useRef<Map<string, number>>(new Map());
-		const lastDateRef = useRef<string | null>(null);
-
-
+	const { currentTime } = useTimeStore();
+	const previousRef = useRef<Map<string, number>>(new Map());
+	const response = useIntradayData(SYMBOLS);
+	const data = response.data || [];
+	const getOpenPrice = response.getOpenPrice;
+	const openPriceRef = useRef<Map<string, number>>(new Map());
+	const lastDateRef = useRef<string | null>(null);
 
 	useEffect(() => {
 		const today = currentTime.toISOString().slice(0, 10);
@@ -65,7 +42,9 @@ export function MarketDataBridge() {
 
 			const updatedStocks: UpdatedStock[] = (data as PriceRow[]).map(
 				(row: PriceRow): UpdatedStock => {
-					let openPrice = openPriceRef.current.get(row.sym_root)?openPriceRef.current.get(row.sym_root) : null;
+					let openPrice = openPriceRef.current.get(row.sym_root)
+						? openPriceRef.current.get(row.sym_root)
+						: null;
 
 					if (!openPrice) {
 						openPrice = getOpenPrice(row.sym_root);

@@ -10,30 +10,9 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { GLOBAL_SYMBOLS } from "@/lib/constants";
 
-const SYMBOLS = [
-	"AAPL",
-	"ABBV",
-	"ADBE",
-	"AMZN",
-	"BA",
-	"BABA",
-	"CRM",
-	"CSCO",
-	"DIS",
-	"GOOG",
-	"KO",
-	"MA",
-	"MSFT",
-	"NFLX",
-	"NVDA",
-	"SHOP",
-	"TSLA",
-	"TWLO",
-	"V",
-	"VOO",
-	"VTI",
-];
+const SYMBOLS = GLOBAL_SYMBOLS;
 
 export default function MarketOverview() {
 	const { stocks } = useStore();
